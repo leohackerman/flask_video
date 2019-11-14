@@ -2,7 +2,9 @@ from flask import Flask
 from flask import render_template
 from flask import Response
 import video
+import argparse
 
+vc = None
 app = Flask(__name__)
 @app.route('/')
 def index():
@@ -19,10 +21,16 @@ def gen():
 def video_feed():
     return Response(gen(),mimetype='multipart/x-mixed-replace; boundary=frame')
 
-
+def run():
+    global app
+    parser = argparse.ArgumentParser(description='A video streamer using flask')
+    parser.add_argument("--h", default='0.0.0.0', help="http address, for example -h 127.0.0.1. Default is 0.0.0.0")
+    parser.add_argument("--p", default=5000, help="port number, for example 4000. Default is 5000")
+    args = parser.parse_args()
+    app.run(host=args.h, port=args.p, debug=True)
 
 vc = video.VideoCamera()
-app.run(host='0.0.0.0',debug=True)
+run()
 
 
 
